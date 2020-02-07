@@ -1,23 +1,24 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { Text, ActivityIndicator, Keyboard } from 'react-native';
+import { Text, Keyboard } from 'react-native';
+
+// Helpers
 import api from '../../services/api';
 import AsyncStorage from '@react-native-community/async-storage';
+import { useNavigation } from '@react-navigation/native';
 
-import {
-    Container,
-    Form,
-    Input,
-    SubmitButton,
-    ListUsers,
-    SubmitButtonText
-} from './styles';
+// Assets
+import { Container, Form, Input, ListUsers } from './styles';
 
+// Components
 import UserCard from '../../components/UserCard';
+import Button from '../../components/Button';
 
 export default function Home() {
     const [textSearch, setTextSearch] = useState('');
     const [results, setResults] = useState([]);
     const [loading, setLoading] = useState(false);
+
+    const navigation = useNavigation();
 
     const getStorageData = useCallback(async () => {
         try {
@@ -26,7 +27,7 @@ export default function Home() {
                     throw new Error();
                 }
 
-                if (result !== null && Array.isArray(result)) {
+                if (result !== null) {
                     setResults(JSON.parse(result));
                 }
             });
@@ -38,6 +39,10 @@ export default function Home() {
     useEffect(() => {
         getStorageData();
     }, [getStorageData]);
+
+    const updateStorage = useCallback(async newData => {
+        await AsyncStorage.setItem('results', JSON.stringify(newData));
+    }, []);
 
     const handleAdd = useCallback(async () => {
         try {
@@ -57,10 +62,7 @@ export default function Home() {
 
             setResults(updateResults);
 
-            await AsyncStorage.setItem(
-                'results',
-                JSON.stringify(updateResults)
-            );
+            updateStorage(updateResults);
         } catch (error) {
             console.log(error);
         } finally {
@@ -68,7 +70,21 @@ export default function Home() {
             Keyboard.dismiss();
             setTextSearch('');
         }
-    }, [textSearch, results]);
+    }, [textSearch, results, updateStorage]);
+
+    const handleRemove = useCallback(
+        id => {
+            try {
+                const updateResults = results.filter(item => item.id !== id);
+
+                setResults(updateResults);
+                updateStorage(updateResults);
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        [results, updateStorage]
+    );
 
     return (
         <Container>
@@ -83,15 +99,9 @@ export default function Home() {
                     value={textSearch}
                     onChangeText={text => setTextSearch(text)}
                 />
-                <SubmitButton onPress={handleAdd}>
-                    {loading ? (
-                        <ActivityIndicator color="#f1f1f1" />
-                    ) : (
-                        <Text>
-                            <SubmitButtonText>ADD</SubmitButtonText>
-                        </Text>
-                    )}
-                </SubmitButton>
+                <Button onPress={handleAdd} loading={loading}>
+                    Add
+                </Button>
             </Form>
 
             {!!results.length && (
@@ -99,7 +109,17 @@ export default function Home() {
                     showsVerticalScrollIndicator={false}
                     data={results}
                     keyExtractor={item => item.login}
-                    renderItem={({ item }) => <UserCard user={item} />}
+                    renderItem={({ item }) => (
+                        <UserCard
+                            user={item}
+                            onPress={() =>
+                                navigation.navigate('User', {
+                                    user: item,
+                                    onRemove: handleRemove
+                                })
+                            }
+                        />
+                    )}
                 />
             )}
         </Container>

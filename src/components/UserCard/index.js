@@ -1,15 +1,12 @@
 import React from 'react';
-import { useNavigation } from '@react-navigation/native';
 
 import { Container, Avatar, Name, Login, Content } from './styles';
 
-export default function UserCard({ user }) {
-    const navigation = useNavigation();
-
+export default function UserCard({ user, onPress }) {
     const { name, avatar_url, login } = user;
 
     return (
-        <Container onPress={() => navigation.navigate('User', { user })}>
+        <Container onPress={onPress}>
             <Avatar source={{ uri: avatar_url }} />
             <Content>
                 <Login numberOfLines={1}>{login}</Login>

@@ -1,5 +1,4 @@
 import styled from 'styled-components/native';
-import { RectButton } from 'react-native-gesture-handler';
 
 export const Container = styled.View`
     background: #ececec;
@@ -34,13 +33,9 @@ export const Bio = styled.Text`
     padding: 0 20px;
 `;
 
-export const CloseButton = styled(RectButton)`
-    background: #28a745;
-    border-radius: 4px;
-    padding: 10px;
-    margin-top: 10px;
-`;
-
-export const CloseButtonText = styled.Text`
-    color: #f1f1f1;
+export const ButtonGroup = styled.View`
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-around;
+    padding: 30px 20px;
 `;
