@@ -13,6 +13,8 @@ export const Avatar = styled.Image`
     height: 150px;
     border-radius: 120px;
     margin-bottom: 10px;
+    border-width: 1px;
+    border-color: #a19a9a;
 `;
 
 export const Login = styled.Text`
@@ -29,6 +31,7 @@ export const Bio = styled.Text`
     color: #a19a9a;
     text-align: center;
     margin-bottom: 10px;
+    padding: 0 20px;
 `;
 
 export const CloseButton = styled(RectButton)`

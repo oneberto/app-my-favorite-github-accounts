@@ -20,7 +20,7 @@ export default function User({ route, navigation }) {
         <Container>
             <Avatar source={{ uri: avatar_url }} />
             <Login>{login}</Login>
-            <Name>{name}</Name>
+            {!!name && <Name>{name}</Name>}
             {!!bio && <Bio>{bio}</Bio>}
 
             <CloseButton onPress={() => navigation.goBack()}>

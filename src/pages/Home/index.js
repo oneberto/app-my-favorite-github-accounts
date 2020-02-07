@@ -68,6 +68,7 @@ export default function Home() {
 
             {!!results.length && (
                 <ListUsers
+                    showsVerticalScrollIndicator={false}
                     data={results}
                     keyExtractor={item => item.login}
                     renderItem={({ item }) => <UserCard user={item} />}
