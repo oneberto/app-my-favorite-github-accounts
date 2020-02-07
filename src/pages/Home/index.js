@@ -13,8 +13,8 @@ import {
 
 import UserCard from '../../components/UserCard';
 
-export default function Home({ navigation }) {
-    const [textSearch, setTextSearch] = useState('oneberto');
+export default function Home() {
+    const [textSearch, setTextSearch] = useState('');
     const [results, setResults] = useState([]);
     const [loading, setLoading] = useState(false);
 
@@ -29,7 +29,7 @@ export default function Home({ navigation }) {
             const { data } = await api.get(`/users/${textSearch}`);
 
             if (!data) {
-                throw new Error('Falha ao obter os dados.');
+                throw new Error();
             }
 
             setResults(old => [data, ...old]);
@@ -49,7 +49,7 @@ export default function Home({ navigation }) {
                 <Input
                     autoCapitalize="none"
                     autoCorrect={false}
-                    placeholder="User name..."
+                    placeholder="Github user..."
                     returnKeyType="go"
                     onSubmitEditing={handleAdd}
                     value={textSearch}
