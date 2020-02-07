@@ -1,6 +1,7 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Text, ActivityIndicator, Keyboard } from 'react-native';
 import api from '../../services/api';
+import AsyncStorage from '@react-native-community/async-storage';
 
 import {
     Container,
@@ -18,6 +19,26 @@ export default function Home() {
     const [results, setResults] = useState([]);
     const [loading, setLoading] = useState(false);
 
+    const getStorageData = useCallback(async () => {
+        try {
+            await AsyncStorage.getItem('results', (error, result) => {
+                if (error) {
+                    throw new Error();
+                }
+
+                if (result !== null && Array.isArray(result)) {
+                    setResults(JSON.parse(result));
+                }
+            });
+        } catch (error) {
+            console.log(error);
+        }
+    }, []);
+
+    useEffect(() => {
+        getStorageData();
+    }, [getStorageData]);
+
     const handleAdd = useCallback(async () => {
         try {
             if (!textSearch) {
@@ -32,7 +53,14 @@ export default function Home() {
                 throw new Error();
             }
 
-            setResults(old => [data, ...old]);
+            const updateResults = [data, ...results];
+
+            setResults(updateResults);
+
+            await AsyncStorage.setItem(
+                'results',
+                JSON.stringify(updateResults)
+            );
         } catch (error) {
             console.log(error);
         } finally {
@@ -40,7 +68,7 @@ export default function Home() {
             Keyboard.dismiss();
             setTextSearch('');
         }
-    }, [textSearch]);
+    }, [textSearch, results]);
 
     return (
         <Container>

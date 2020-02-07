@@ -14,8 +14,6 @@ export default function User({ route, navigation }) {
     const { user } = route.params;
     const { name, avatar_url, login, bio } = user;
 
-    console.log('user', user);
-
     return (
         <Container>
             <Avatar source={{ uri: avatar_url }} />
